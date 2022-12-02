@@ -7,4 +7,5 @@ urlpatterns = [
     path('post/<int:kitab_pk>/write_comment',CommentListCreateApiView.as_view(),name='write-comment'),
     path('comment/<int:pk>',CommentDetailApiView.as_view(),name='comment-detail'),
     path('posts/<slug:category_slug>',CategoryApiView.as_view(),name='post_by_category'),
+    path('search/<str:search_term>',SearchPostApiView.as_view(),name='search'),
 ]

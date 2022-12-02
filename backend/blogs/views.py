@@ -14,7 +14,7 @@ class PostListCreateApiView(ListCreateAPIView):
 
 
 
-class PostDetailApiView(RetrieveAPIView):
+class PostDetailApiView(RetrieveUpdateDestroyAPIView):
     serializer_class=PostSerializer
     queryset=Post.objects.all()
     lookup_url_kwarg='kitab_pk'
@@ -55,11 +55,23 @@ class CategoryApiView(APIView):
 class SearchPostApiView(APIView):
     def get(self,request,search_term):
         matches = Post.objects.filter(
-            Q(title__icontains=search_term) |
-            Q(category__name__icontains=search_term)
-        )
+        Q(title__icontains=search_term) |
+        Q(category__name__icontains=search_term) |
+        Q(description__icontains=search_term))
+        
+        if matches is not None:
+           serializer = PostSerializer(matches, many=True)
+           return Response({'Neticeler':serializer.data})
+                     
 
-        serializer = PostSerializer(matches, many=True)
-        return Response({'Neticeler':serializer.data})    
+        else:
+           return Response('not')       
+
+        
+
+           
+       
+
+        
     
      
