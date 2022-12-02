@@ -27,12 +27,12 @@ class Post(models.Model):
 
 
     title=models.CharField(max_length=200)
-    description = models.CharField(max_length=250)
+    description = models.TextField()
     publish_date=models.DateTimeField(auto_now_add=True)
     image=models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True)
     category=models.ForeignKey(Category,on_delete=models.SET_NULL,related_name='blogs',null=True)
     author=models.ForeignKey(User,on_delete=models.CASCADE, blank=True, null=True, related_name="blogs")
-    status=models.BooleanField(max_length=10,default='Draft',choices=STATUS_CHOICES)
+    status=models.CharField(max_length=10,default='Draft',choices=STATUS_CHOICES)
     objects=models.Manager()
     newmanager=NewManager()
 
