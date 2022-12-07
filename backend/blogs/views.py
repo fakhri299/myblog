@@ -5,35 +5,29 @@ from blogs.models import Post,Comment,Category
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models.query_utils import Q
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 
 # Create your views here.
-class PostListCreateApiView(ListCreateAPIView):
+class PostListCreateApiViewSet(ReadOnlyModelViewSet):
     serializer_class=PostSerializer
-    queryset=Post.objects.all()
+    queryset=Post.newmanager.all()
+    permission_classes=[AllowAny]
 
 
 
-class PostDetailApiView(RetrieveUpdateDestroyAPIView):
-    serializer_class=PostSerializer
-    queryset=Post.objects.all()
-    lookup_url_kwarg='kitab_pk'
-
-
-class CommentListCreateApiView(ListCreateAPIView):
+class CommentListCreateApiView(ReadOnlyModelViewSet):
     serializer_class=CommentSerializer
     queryset=Comment.objects.all()
 
     def perform_create(self, serializer,**kwargs):
-        post_pk=self.kwargs.get('kitab_pk')
+        post_pk=self.kwargs.get('post_pk')
         post=Post.objects.get(pk=post_pk)
         serializer.save(post=post)
 
 
-class CommentDetailApiView(RetrieveUpdateDestroyAPIView):
-    serializer_class=CommentSerializer
-    queryset=Comment.objects.all()
-    lookup_url_kwarg='comment_pk'
+
 
 
 
