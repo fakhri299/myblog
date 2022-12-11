@@ -44,7 +44,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
 
+    
 
+    'django_filters',
+    
   
 
     
@@ -184,6 +187,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
-}
 
+  
+}
+REST_FRAMEWORK={
+'DEFAULT_PERMISSION_CLASSES': [ 'rest_framework.permissions.IsAdminUser', ]
+}
 

@@ -6,17 +6,23 @@ from rest_framework.views import APIView
 from django.db.models.query_utils import Q
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAuthenticatedOrReadOnly
-from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
-from blogs.permissions import OwnProfilorReadOnly,OwnCommentorReadOnly
+from blogs.permissions import OwnProfilorReadOnly,OwnCommentorReadOnly,IsAdminUserOrReadOnly
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView,DestroyAPIView,CreateAPIView
-
+from blogs.filters import PostFilter,CategoryFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
 class PostListCreateApiViewSet(ModelViewSet):
     serializer_class=PostSerializer
     queryset=Post.newmanager.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PostFilter
     permission_classes=[OwnProfilorReadOnly,IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer,**kwargs):
+        author=self.request.user
+        serializer.save(author=author)
+   
 
 
 
@@ -44,11 +50,15 @@ class CommentListApiView(ListAPIView):
 
 
 
-class CategoryApiView(APIView):
-    def get(self,request,category_slug):
-        post_by_category=Post.objects.filter(category__slug=category_slug)
-        serializer=PostSerializer(post_by_category,many=True)
-        return Response({'Related posts':serializer.data})
+class CategoryListCreateAPIView(ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CategoryFilter
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+
 
 
 
@@ -58,15 +68,16 @@ class SearchPostApiView(APIView):
         matches = Post.objects.filter(
         Q(title__icontains=search_term) |
         Q(category__name__icontains=search_term) |
-        Q(description__icontains=search_term))
+        Q(description__icontains=search_term)|
+        Q(author__username=search_term))
         
-        if matches is not None:
+        if matches:
            serializer = PostSerializer(matches, many=True)
            return Response({'Results':serializer.data})
                      
 
         else:
-           return Response('not')       
+           return Response('Not matches')       
 
         
 

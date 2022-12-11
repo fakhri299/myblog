@@ -12,6 +12,6 @@ urlpatterns = [
     path('posts/<int:post_pk>/write_comment',CommentCreateApiView.as_view(),name='write-comment'),
     path('comments/<int:pk>',CommentDetailApiView.as_view(),name='comment-detail'),
     path('comments/',CommentListApiView.as_view(),name='comment-list'),
-    path('posts/<slug:category_slug>',CategoryApiView.as_view(),name='post_by_category'),
+    path('categories/', CategoryListCreateAPIView.as_view()),
     path('search/<str:search_term>',SearchPostApiView.as_view(),name='search'),
 ]

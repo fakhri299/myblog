@@ -9,7 +9,7 @@ class Category(models.Model):
     slug=models.SlugField(max_length=50,unique=True,null=True,blank=True)
 
     def __str__(self):
-        return self.name
+         return self.name
 
 
 
@@ -30,12 +30,12 @@ class Post(models.Model):
     description = models.TextField()
     publish_date=models.DateTimeField(auto_now_add=True)
     image=models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True)
-    category=models.ForeignKey(Category,on_delete=models.SET_NULL,related_name='blogs',null=True)
     author=models.ForeignKey(User,on_delete=models.CASCADE, blank=True, null=True, related_name="blogs")
     status=models.CharField(max_length=10,default='Draft',choices=STATUS_CHOICES)
+    category=models.ForeignKey(Category,on_delete=models.DO_NOTHING,related_name='posts',null=True)
     objects=models.Manager()
     newmanager=NewManager()
-
+    
 
     def __str__(self):
         return self.title
@@ -49,4 +49,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.author)
+
     
